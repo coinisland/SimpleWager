@@ -17,13 +17,13 @@ contract SimpleWager {
     uint totalBettingAmountMinusHouseCut;
 
     // current betting amounts for each bet and each player
-    mapping(address => uint256) leftBettingAmount;
-    mapping(address => uint256) rightBettingAmount;
+    mapping(address => uint) leftBettingAmount;
+    mapping(address => uint) rightBettingAmount;
     mapping(address => bool) winningAlreadyClaimed;
 
     // wager ended
-    bool ended;
-    bool leftWonTheWager;
+    bool public ended;
+    bool public leftWonTheWager;
     bool houseCutAlreadyClaimed;
 
     event betPlaced(bool betLeft, uint amount);
@@ -134,7 +134,7 @@ contract SimpleWager {
         emit houseCutClaimed(amount);
 
         return true;
-    }
+    
 
     // end of wager and assign the winner (left or right)
     function endWager(bool _leftWon) public {
