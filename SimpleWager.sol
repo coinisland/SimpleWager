@@ -1,4 +1,4 @@
-pragma solidity ^0.4.22;
+pragma solidity 0.4.22;
 
 /// @title Simple wager contract with a house
 contract SimpleWager {
@@ -17,19 +17,19 @@ contract SimpleWager {
     uint totalBettingAmountMinusHouseCut;
 
     // current betting amounts for each bet and each player
-    mapping(address => uint) leftBettingAmount;
-    mapping(address => uint) rightBettingAmount;
-    mapping(address => bool) winningAlreadyClaimed;
+    mapping(address => uint) public leftBettingAmount;
+    mapping(address => uint) public rightBettingAmount;
+    mapping(address => bool) public winningAlreadyClaimed;
 
     // wager ended
     bool public ended;
     bool public leftWonTheWager;
-    bool houseCutAlreadyClaimed;
+    bool public houseCutAlreadyClaimed;
 
-    event betPlaced(bool betLeft, uint amount);
-    event wagerEnded(bool leftWon);
-    event winningClaimed(uint amount);
-    event houseCutClaimed(uint amount);
+    event BetPlaced(bool betLeft, uint amount);
+    event WagerEnded(bool leftWon);
+    event WinningClaimed(uint amount);
+    event HouseCutClaimed(uint amount);
 
     // create a simple wager
     constructor(
@@ -80,10 +80,10 @@ contract SimpleWager {
             }
 
             totalBettingAmount += msg.value;
-            emit betPlaced(left, msg.value);
+            emit BetPlaced(left, msg.value);
         }
     }
-
+    
     // claim winning
     function claim() public returns (bool) {
         require(ended, "Wager is still ongoing");
@@ -112,7 +112,7 @@ contract SimpleWager {
             return false;
         }
 
-        emit winningClaimed(amount);
+        emit WinningClaimed(amount);
 
         return true;
     }
@@ -131,7 +131,7 @@ contract SimpleWager {
             return false;
         }
 
-        emit houseCutClaimed(amount);
+        emit HouseCutClaimed(amount);
 
         return true;
     
@@ -148,6 +148,6 @@ contract SimpleWager {
         leftWonTheWager = _leftWon;
         totalBettingAmountMinusHouseCut = totalBettingAmount * (100 - houseCut) / 100;
  
-        emit wagerEnded(_leftWon);
+        emit WagerEnded(_leftWon);
     }
 }
