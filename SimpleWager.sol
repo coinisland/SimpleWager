@@ -134,7 +134,7 @@ contract SimpleWager {
         emit HouseCutClaimed(amount);
 
         return true;
-    
+    }
 
     // end of wager and assign the winner (left or right)
     function endWager(bool _leftWon) public {
