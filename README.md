@@ -27,11 +27,11 @@ e.g.
 - endWager(false) to end the wager and announce that the right side has won.
 
 After endWager is called, winners are able to call "claim" function to get their winnings back to their account.
-The house can call "calimHouseCut" to withdraw house cut.
+The house can call "claimHouseCut" to withdraw house cut.
 
 Events:
 
-- betPlaced(betLeft, amount): someone placed a bet on left (or right) with amount
-- wagerEnded(leftWon): the house ended and settled the wager
-- winningClaimed(amount): someone claimed his or her winnings
-- houseCutClaimed(amount): the house claimed house cut
+- BetPlaced(betLeft, amount): someone placed a bet on left (or right) with amount
+- WagerEnded(leftWon): the house ended and settled the wager
+- WinningClaimed(amount): someone claimed his or her winnings
+- HouseCutClaimed(amount): the house claimed house cut
