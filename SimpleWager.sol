@@ -1,4 +1,4 @@
-pragma solidity 0.4.22;
+pragma solidity 0.4.24;
 
 /// @title Simple wager contract with a house
 contract SimpleWager {
@@ -14,7 +14,7 @@ contract SimpleWager {
     uint public leftTotalBettingAmount;
     uint public rightTotalBettingAmount;
     uint public totalBettingAmount;
-    uint totalBettingAmountMinusHouseCut;
+    uint public totalBettingAmountMinusHouseCut;
 
     // current betting amounts for each bet and each player
     mapping(address => uint) public leftBettingAmount;
