@@ -81,7 +81,7 @@ function checkNetwork(callback) {
       }
     }
     else {
-      console.log("Error: " + error);
+      console.log(error);
     }
   });
 }
@@ -140,6 +140,7 @@ function deployWager() {
             "\tHouse Cut: " + houseCut + "%\n\n" + 
             "It takes some time to deploy wager. Please wait patiently for the wager link to appear.";
         if (confirm(confirmStr)) {
+            document.getElementById('metamask').innerHTML = '';
             document.getElementById('contractlink').innerHTML = 'Your wager link will appear here when ready.';
             var simplewagerContract = web3js.eth.contract(contractABI);
             var minBetWei = web3js.toWei(minBet, 'ether');
@@ -152,23 +153,28 @@ function deployWager() {
                     if (typeof contract.address !== 'undefined') {
                         document.getElementById('contractlink').innerHTML = 'Your wager is ready at <a href="' + host + 'bet.php?addr=' + contract.address + '" >Wager Page</a>';
                         console.log("Contract address: " + contract.address);
+                        runApp();
                     }
                 }
                 else {
                     document.getElementById('contractlink').innerHTML = '';
                     alert("Something is wrong, please try again later.");
-                    console.log("Error: " + error);
+                    console.log(error);
                 }
             });
         }
     });
 }
 
-function startApp() {
-    console.log("StartApp");
+function runApp() {
     checkNetwork(function() {
         document.getElementById('metamask').innerHTML = '<button type="button" onclick="deployWager()">Deploy</button>';
     });
+}
+
+function startApp() {
+    console.log("StartApp");
+    runApp();
 }
 
 window.addEventListener('load', function() {
