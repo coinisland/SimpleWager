@@ -1,5 +1,11 @@
 <?php
-$contract = $_GET["addr"];
+if (isset($_GET["addr"])) {
+  $contract = $_GET["addr"];
+}
+else {
+  $str = 'No addr parameter. Use a link generated from <a href="' . $SERVER['HTTP_REFERER'] . 'house.php" >house.php</a>.';
+  exit($str);
+}
 ?>
 
 <html>
@@ -43,6 +49,9 @@ $contract = $_GET["addr"];
 <script type='text/javascript' src='SimpleWager.js'></script>
 <script type='text/javascript'>
 
+// designate network
+// "1" for main net
+// "3" for Ropsten test net
 var supportedNetworkType = "3";
 var simplewager;
 
@@ -56,20 +65,21 @@ function claimWinning(address) {
         simplewager.claim(function(error, result) {
           if (!error) {
             if (result) {
-              alert("Your winning is successfully claimed. Please wait a moment for the winngins to be transfered to your account.");
+              alert("Your winning is claimed. Please wait a moment for the winngins to be transfered to your account.");
+              refreshApp(result);
             }
             else {
               alert("Something went wrong. Please try again later.");
             }
           }
           else {
-            console.log("Error: " + error);
+            console.log(error);
           }
         });
       }
     }
     else {
-      console.log("Error: " + error);
+      console.log(error);
     }
   });
 }
@@ -92,7 +102,7 @@ function claim(left) {
           }
         }
         else {
-          console.log("Error: " + error);
+          console.log(error);
         }
       });
     }
@@ -107,7 +117,7 @@ function claim(left) {
           }
         }
         else {
-          console.log("Error: " + error);
+          console.log(error);
         }
       });
     }
@@ -124,11 +134,11 @@ function doClaimHouseCut() {
         simplewager.claimHouseCut(function(error, result) {
           if (!error) {
             alert("House cut is successfully claimed.");
-            runApp();
+            refreshApp(result);
           }
           else {
             alert("Something is wrong, please try again later.");
-            console.log("Error: " + error);
+            console.log(error);
           }
         });
       }
@@ -155,7 +165,7 @@ function claimHouseCut() {
         }
       }
       else {
-        console.log("Error: " + error);
+        console.log(error);
       }
     });
   });
@@ -166,11 +176,11 @@ function declareWinnerWithName(left, name) {
     simplewager.endWager(left, function(error, result) {
       if (!error) {
         alert(name + " has been declared as the winner!");
-        runApp();        
+        refreshApp(result);
       }
       else {
         alert("Somethins is wrong. Please try again later.");
-        console.log("Error: " + error);
+        console.log(error);
       }
     });
   }
@@ -201,9 +211,44 @@ function declareWinner(left) {
         }
       }
       else {
-        console.log("Error: " + error);
+        console.log(error);
       }
     });
+  });
+}
+
+function refreshApp(transaction) {
+  document.getElementById('leftamount').innerHTML = "...Refreshing...";
+  document.getElementById('leftplacebet').innerHTML = "";
+  document.getElementById('leftwinning').innerHTML = "";
+  document.getElementById('rightamount').innerHTML = "...Refreshing...";
+  document.getElementById('rightplacebet').innerHTML = "";
+  document.getElementById('rightwinning').innerHTML = "";
+
+  simplewager.house(function(error, house) {
+    if (!error && house == web3js.eth.defaultAccount) {
+      document.getElementById('claimhousecut').innerHTML = "...Refreshing...";
+      document.getElementById('housecutamount').innerHTML = "";
+    }
+  });
+
+  var filter = web3js.eth.filter({ fromBlock: 'latest', toBlock: 'latest', address: web3js.eth.defaultAddress});
+
+  filter.watch(function(error, result) {
+    if (!error) {
+      if (result.transactionHash == transaction) {
+        filter.stopWatching();
+        runApp();
+
+        if (result.removed) {
+          alert("The transaction did not complete. Please try again later.");
+        }
+      }
+    }
+    else {
+      console.log(error);
+      filter.stopWatching();
+    }
   });
 }
 
@@ -216,13 +261,14 @@ function placeBetWithAddress(left, name, address) {
     if (confirm("Bet on " + name + " with " + bet + " ETH?")) {
       simplewager.placeBet.sendTransaction(left, { from: address, value: amount }, function(error, result) {
         if (!error) {
-          alert("You have successfully placed the bet! It will take some time for the bet to reflect on the blockchain.");
+          alert("You have placed the bet! It will take some time for the bet to reflect on the blockchain.");
           // refresh the page
-          runApp();
+          //console.log(result);
+          refreshApp(result);
         }
         else {
           alert("Something is wrong, please try again.");
-          console.log("Error: " + error);
+          console.log(error);
         }
       });
     }
@@ -314,7 +360,7 @@ function runApp() {
                       }
                     }
                     else {
-                      console.log("Error: " + error);
+                      console.log(error);
                     }
                   });
                 }
@@ -362,7 +408,7 @@ function runApp() {
                 }
               }
               else {
-                console.log("Error: " + error);
+                console.log(error);
               }
             });
 
@@ -372,12 +418,12 @@ function runApp() {
                 document.getElementById('endtime').innerHTML = 'Bet ended at ' + endTime.toString();
               }
               else {
-                console.log("Error: " + error);
+                console.log(error);
               }
             });
           }
           else {
-            console.log("Error: " + error);
+            console.log(error);
           }
         });
       }
@@ -415,7 +461,7 @@ function runApp() {
             });
           }
           else {
-            console.log("Error: " + error);
+            console.log(error);
           }
         });
       }
@@ -461,7 +507,7 @@ function checkNetwork(callback) {
       }
     }
     else {
-      console.log("Error: " + error);
+      console.log(error);
     }
   });
 }
