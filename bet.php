@@ -109,10 +109,15 @@ function claim(left) {
     else {
       simplewager.rightBettingAmount(address, function(error, result) {
         if (!error) {
+          console.log(result);
           if (result.isZero()) {
             alert("You have no winning to claim!");
           }
           else {
+            if (!confirm("Do you want to claim your winning?\nNOTE: Fees may apply when claiming your winning. Do not repeat or you may lose fees.")) {
+              return;
+            }
+
             claimWinning(address);
           }
         }
@@ -394,14 +399,14 @@ function runApp() {
                         });
                       }
                       else {
-                        simplewager.rightTotalBettingAmount(function(error, leftTotalBettingAmount) {
+                        simplewager.rightTotalBettingAmount(function(error, rightTotalBettingAmount) {
                           if (!error) {
-                            simplewager.leftBettingAmount(address, function(error, result) {
+                            simplewager.rightBettingAmount(address, function(error, result) {
                               if (!error && !result.isZero()) {
                                 simplewager.winningAlreadyClaimed(address, function(error, claimed) {
                                   if (!error && !claimed) {
                                     document.getElementById('rightplacebet').innerHTML = '<button type="button" onclick="claim(false)">Claim Winnings</button>';
-                                    var estimatedProceeding = result.mul(totalBettingAmountMinusHouseCut).divToInt(leftTotalBettingAmount);
+                                    var estimatedProceeding = result.mul(totalBettingAmountMinusHouseCut).divToInt(rightTotalBettingAmount);
                                     document.getElementById('rightwinning').innerHTML = 'Your estimated winning is ' + web3js.fromWei(estimatedProceeding) + ' ETH (fees may apply)';
                                   }
                                 });
