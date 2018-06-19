@@ -143,6 +143,13 @@ contract SimpleWager {
         require(now > wagerEnd, "Wager is still active.");
         require(!ended, "endWager has already been called.");
 
+        if (_leftWon) {
+            require(leftTotalBettingAmount > 0, "Winning side must has bet.");
+        }
+        else {
+            require(rightTotalBettingAmount > 0, "Winning side must has bet.");
+        }
+
         // set end parameters
         ended = true;
         leftWonTheWager = _leftWon;
