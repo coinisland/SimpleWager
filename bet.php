@@ -257,6 +257,13 @@ function placeBetWithAddress(left, name, address) {
     var minBet = web3js.fromWei(result, 'ether');
     var prompt = "You are about to place bet on " + name + ".\nThe minimum bet is " + minBet + " ETH.\nPlease enter your bet:";
     var bet = window.prompt(prompt, minBet);
+    if (bet === null) {
+      return;
+    }
+    else if (bet === '') {
+      alert("You need to enter something to place bet.");
+    }
+
     var amount = web3js.toWei(bet, 'ether');
     if (confirm("Bet on " + name + " with " + bet + " ETH?")) {
       simplewager.placeBet.sendTransaction(left, { from: address, value: amount }, function(error, result) {
