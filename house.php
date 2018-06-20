@@ -120,7 +120,7 @@ function deployWager() {
             return;
         }
 
-        if (minBet < 0 || typeof wagerName === 'undefined') {
+        if (minBet < 0 || typeof minBet === 'undefined') {
             alert("Please enter a valid minimum bet.");
             return;
         }
